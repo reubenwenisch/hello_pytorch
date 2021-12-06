@@ -53,7 +53,8 @@ def train(trainloader, net, params, train_loss, scheduler, freq = 100):
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
         acc = 100*correct/total
-        params['mb'].child.comment = f'Train Loss={loss.item():0.4f}\t Batch_id={i}\t Train Accuracy={acc:0.2f}'
+        lr_step = params['optimizer'].state_dict()["param_groups"][0]["lr"]
+        params['mb'].child.comment = f'Train Loss={loss.item():0.4f}\t Batch_id={i}\t Train Accuracy={acc:0.2f} Learning Rate={lr_step}'
         # if (i+1) % freq == 0:    # every 1000 mini-batches...
             # ...log the running loss
         # params['writer'].add_scalar('training loss', running_loss / freq, params['epoch'] * len(trainloader) + i)
@@ -61,6 +62,7 @@ def train(trainloader, net, params, train_loss, scheduler, freq = 100):
         params['writer'].add_scalar('Accuracy', acc, params['epoch'] * len(trainloader) + i)
             # ...log a Matplotlib Figure showing the model's predictions on a
             # random mini-batch
+        # print("Learning Rate", lr_step)
     train_loss.append(running_loss / 1000)
     return train_loss, acc
 
